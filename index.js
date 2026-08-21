@@ -58,9 +58,14 @@ shadowLight.shadow.blurSamples = 25;
 shadowLight.shadow.bias = -0.0001;
 scene.add(shadowLight);
 
-// material
+// material & texture loading
 const textureLoader = new THREE.TextureLoader();
-const [coordTex, randTex, baseColorTex] = ['./assets/coord.png', './assets/rand_index.png', './assets/baseColor.png'].map((path) => {
+const [coordTex, randTex, baseColorTex, shadowTex] = [
+  './assets/coord.png', 
+  './assets/rand_index.png', 
+  './assets/baseColor.png',
+  './assets/shadow.png'
+].map((path) => {
   const tex = textureLoader.load(path);
   tex.flipY = false;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -198,6 +203,11 @@ models.forEach(({ name, path, pos }) => {
 
       if (name === 'bgPlane') {
         child.receiveShadow = true;
+        // Apply shadow.png as diffuse map on bgPlane mesh material
+        if (child.material) {
+          child.material.map = shadowTex;
+          child.material.needsUpdate = true;
+        }
       } else {
         child.castShadow = true;
         child.receiveShadow = true;
